@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a2d4a">
+<title>ロンドン気づきノート 〜裕介の成長記録〜</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #f5efe0;
+    --card: #faf6ea;
+    --ink: #1a2d4a;
+    --ink-soft: #4a5a75;
+    --accent: #c9302c;
+    --gold: #b8860b;
+    --border: rgba(26,45,74,0.15);
+    --shadow: rgba(0,0,0,0.08);
+    --success: #2d7a5f;
+  }
+  body.dark {
+    --bg: #0d1628;
+    --card: #152238;
+    --ink: #f5efe0;
+    --ink-soft: #b0bcd0;
+    --accent: #e04b47;
+    --gold: #d4a64a;
+    --border: rgba(245,239,224,0.15);
+    --shadow: rgba(0,0,0,0.4);
+    --success: #4fb892;
+  }
+  body {
+    font-family: "Hiragino Sans", "Yu Gothic", -apple-system, "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 14px 12px 40px;
+    transition: background 0.3s, color 0.3s;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+
+  /* ヘッダー */
+  header { text-align: center; position: relative; padding: 10px 0 14px; }
+  .dark-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    width: 38px; height: 38px; border-radius: 50%;
+    cursor: pointer; font-size: 16px; color: var(--ink);
+  }
+  .title { font-size: 22px; letter-spacing: 2px; font-weight: 700; color: var(--gold); }
+  .subtitle { font-size: 11px; color: var(--ink-soft); letter-spacing: 3px; margin-top: 4px; }
+  .streak-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 10px; font-size: 13px;
+    background: var(--ink); color: var(--bg);
+    padding: 5px 14px; border-radius: 14px; letter-spacing: 1px;
+  }
+
+  /* ナビ */
+  nav.tabs {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 4px; margin: 14px 0 16px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 4px; border-radius: 12px;
+  }
+  .tab-btn {
+    background: transparent; border: none; color: var(--ink-soft);
+    padding: 10px 4px; font-size: 12px; cursor: pointer;
+    border-radius: 8px; font-family: inherit; font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active { background: var(--ink); color: var(--bg); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* フィールド */
+  .date-label {
+    font-size: 13px; color: var(--gold);
+    letter-spacing: 1px; margin-bottom: 16px; text-align: center;
+  }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--ink); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .field-hint { font-size: 10px; color: var(--ink-soft); font-weight: 400; margin-left: 8px; }
+  textarea, input[type=text], input[type=search], select {
+    width: 100%; padding: 12px; font-family: inherit; font-size: 14px;
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--ink); outline: none; resize: vertical;
+  }
+  textarea:focus, input:focus, select:focus { border-color: var(--gold); }
+  #fieldEvent { min-height: 110px; }
+  #fieldLearning { min-height: 90px; }
+  #fieldTomorrow { min-height: 70px; }
+
+  /* 気分ピッカー */
+  .mood-picker { display: flex; gap: 6px; }
+  .mood-star {
+    font-size: 30px; cursor: pointer; color: var(--ink-soft);
+    user-select: none; transition: transform 0.1s;
+  }
+  .mood-star.on { color: var(--gold); }
+  .mood-star:active { transform: scale(1.2); }
+
+  /* タグピッカー */
+  .tag-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-chip {
+    background: var(--card); border: 1.5px solid var(--border);
+    padding: 7px 12px; border-radius: 16px; font-size: 12px;
+    cursor: pointer; color: var(--ink); font-family: inherit;
+    letter-spacing: 0.5px;
+  }
+  .tag-chip.on {
+    background: var(--ink); color: var(--bg); border-color: var(--ink);
+  }
+
+  /* 保存ボタン */
+  .save-btn {
+    width: 100%; padding: 14px; background: var(--gold); color: white;
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+    letter-spacing: 2px; cursor: pointer; font-family: inherit;
+    margin-top: 10px;
+  }
+  .save-btn:active { transform: scale(0.99); }
+  .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: white; padding: 12px 24px;
+    border-radius: 24px; font-size: 14px; letter-spacing: 1px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    opacity: 0; pointer-events: none; transition: all 0.3s;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+
+  /* 履歴 */
+  .search-row {
+    display: flex; gap: 8px; margin-bottom: 12px;
+  }
+  .search-row input { flex: 1; }
+  .filter-row {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+  }
+  .filter-chip {
+    font-size: 11px; padding: 5px 10px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--card);
+    cursor: pointer; color: var(--ink-soft); font-family: inherit;
+  }
+  .filter-chip.on { background: var(--gold); color: white; border-color: var(--gold); }
+
+  .history-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px;
+    cursor: pointer; transition: transform 0.1s;
+  }
+  .history-card:active { transform: scale(0.99); }
+  .hc-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .hc-date { font-size: 13px; color: var(--gold); font-weight: 600; letter-spacing: 1px; }
+  .hc-mood { font-size: 13px; color: var(--gold); }
+  .hc-excerpt {
+    font-size: 13px; color: var(--ink); line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .hc-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .hc-tag {
+    font-size: 10px; padding: 2px 8px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--ink-soft);
+  }
+
+  /* 振り返り */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 18px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 8px; text-align: center;
+  }
+  .stat-num {
+    font-size: 26px; font-weight: 700; color: var(--gold);
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 10px; color: var(--ink-soft);
+    letter-spacing: 1px; margin-top: 4px;
+  }
+  .section-title {
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    letter-spacing: 2px; margin: 22px 0 10px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .chart-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px;
+  }
+  .bar-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .bar-label { flex: 0 0 85px; color: var(--ink); }
+  .bar-track {
+    flex: 1; height: 18px; background: var(--bg);
+    border-radius: 9px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; background: var(--gold); border-radius: 9px;
+    transition: width 0.5s; display: flex;
+    align-items: center; justify-content: flex-end;
+    padding-right: 8px; color: white; font-size: 10px; font-weight: 600;
+  }
+  .highlight-card {
+    background: var(--card); border-left: 3px solid var(--gold);
+    padding: 12px 14px; margin-bottom: 8px; border-radius: 0 8px 8px 0;
+  }
+  .hl-date { font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; }
+  .hl-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+  /* レポート */
+  .report-controls {
+    display: flex; gap: 8px; margin-bottom: 14px;
+  }
+  .report-controls select { flex: 1; }
+  .report-preview {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 16px; margin-bottom: 14px;
+    font-size: 13px; line-height: 1.8; white-space: pre-wrap;
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    min-height: 200px; color: var(--ink);
+  }
+  .report-actions {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .report-btn {
+    padding: 10px; font-size: 12px; background: var(--card);
+    border: 1.5px solid var(--border); border-radius: 10px;
+    cursor: pointer; font-family: inherit; color: var(--ink);
+    letter-spacing: 1px;
+  }
+  .report-btn:active { transform: scale(0.98); }
+
+  /* データ管理 */
+  .data-section { margin-top: 28px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .data-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .danger { color: var(--accent); border-color: var(--accent); }
+
+  /* モーダル */
+  .modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: none; justify-content: center; align-items: flex-end;
+    z-index: 100; padding: 0;
+  }
+  .modal.show { display: flex; }
+  .modal-content {
+    background: var(--bg); width: 100%; max-width: 680px;
+    max-height: 90vh; overflow-y: auto;
+    border-radius: 16px 16px 0 0; padding: 20px 16px 30px;
+    position: relative;
+  }
+  @media (min-width: 600px) {
+    .modal { align-items: center; padding: 20px; }
+    .modal-content { border-radius: 16px; }
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 12px;
+    background: none; border: none; font-size: 26px;
+    cursor: pointer; color: var(--ink); width: 36px; height: 36px;
+  }
+  .modal-title {
+    text-align: center; font-size: 16px; font-weight: 600;
+    letter-spacing: 2px; margin-bottom: 18px; color: var(--gold);
+  }
+
+  .empty {
+    text-align: center; padding: 50px 20px;
+    color: var(--ink-soft); font-size: 13px; line-height: 1.8;
+  }
+
+  footer {
+    text-align: center; margin-top: 34px;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+  .motto { font-size: 13px; letter-spacing: 3px; margin-bottom: 6px; }
+  .from { font-size: 11px; color: var(--gold); letter-spacing: 1px; }
+
+  @media (max-width: 400px) {
+    .title { font-size: 19px; }
+    .tab-btn { font-size: 11px; }
+    .stat-num { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <button class="dark-toggle" id="darkToggle" aria-label="dark mode">🌙</button>
+    <h1 class="title">ロンドン気づきノート</h1>
+    <p class="subtitle">裕介の成長を記録する場所</p>
+    <div class="streak-badge" id="streakBadge">🔥 連続 0 日</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="write">✏️ 書く</button>
+    <button class="tab-btn" data-tab="history">📖 履歴</button>
+    <button class="tab-btn" data-tab="reflect">📊 振り返り</button>
+    <button class="tab-btn" data-tab="report">💌 報告書</button>
+  </nav>
+
+  <main>
+    <!-- 書く -->
+    <section class="section active" id="sec-write">
+      <p class="date-label" id="todayLabel"></p>
+
+      <div class="field">
+        <label>今日の出来事 <span class="field-hint">どんな一日だった？</span></label>
+        <textarea id="fieldEvent" placeholder="お客様とのやりとり、厨房での発見、街で見かけた景色..."></textarea>
+      </div>
+      <div class="field">
+        <label>気づき・学び <span class="field-hint">小さなことでOK</span></label>
+        <textarea id="fieldLearning" placeholder="今日、気づいたこと・学んだこと..."></textarea>
+      </div>
+      <div class="field">
+        <label>明日の一言 <span class="field-hint">未来の自分へ</span></label>
+        <textarea id="fieldTomorrow" placeholder="明日の自分へ、短いメッセージ..."></textarea>
+      </div>
+      <div class="field">
+        <label>今日の気分</label>
+        <div class="mood-picker" id="moodPicker"></div>
+      </div>
+      <div class="field">
+        <label>タグ <span class="field-hint">複数選択OK</span></label>
+        <div class="tag-picker" id="tagPicker"></div>
+      </div>
+
+      <button class="save-btn" id="saveBtn">今日の記録を保存</button>
+    </section>
+
+    <!-- 履歴 -->
+    <section class="section" id="sec-history">
+      <div class="search-row">
+        <input type="search" id="searchInput" placeholder="🔍 キーワードで探す">
+      </div>
+      <div class="filter-row" id="filterRow"></div>
+      <div id="historyList"></div>
+    </section>
+
+    <!-- 振り返り -->
+    <section class="section" id="sec-reflect">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="stWeek">0</div>
+          <div class="stat-label">今週の記録</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stMonth">0</div>
+          <div class="stat-label">今月の記録</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stTotal">0</div>
+          <div class="stat-label">累計記録日</div>
+        </div>
+      </div>
+
+      <h3 class="section-title">🏷️ タグ別の記録数</h3>
+      <div class="chart-wrap" id="tagChart"></div>
+
+      <h3 class="section-title">📈 気分の推移（直近30日）</h3>
+      <div class="chart-wrap" id="moodChart"></div>
+
+      <h3 class="section-title">🌟 今月のハイライト</h3>
+      <div id="highlights"></div>
+    </section>
+
+    <!-- 報告書 -->
+    <section class="section" id="sec-report">
+      <div class="report-controls">
+        <select id="reportMonth"></select>
+      </div>
+      <div class="report-preview" id="reportPreview"></div>
+      <div class="report-actions">
+        <button class="report-btn" id="copyReport">📋 コピー</button>
+        <button class="report-btn" id="mailReport">📧 メール</button>
+        <button class="report-btn" id="lineReport">💬 LINE</button>
+      </div>
+
+      <div class="data-section">
+        <h3 class="section-title">💾 データ管理</h3>
+        <div class="data-row">
+          <button class="report-btn" id="exportBtn">⬇️ 書き出し</button>
+          <button class="report-btn" id="importBtn">⬆️ 読み込み</button>
+          <button class="report-btn danger" id="resetBtn">🗑️ 初期化</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none;">
+      </div>
+    </section>
+  </main>
+
+  <!-- モーダル -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">×</button>
+      <h2 class="modal-title" id="modalTitle">記録</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <p class="motto">考えるを、ひとりにしない。</p>
+    <p class="from">— YoshiBonより with love from Japan</p>
+  </footer>
+</div>
+
+<script>
+// ===== データ定義 =====
+const TAGS = [
+  { id: 'english',   label: '🇬🇧 英語' },
+  { id: 'service',   label: '🍵 接客' },
+  { id: 'food',      label: '🍣 料理' },
+  { id: 'people',    label: '🤝 人間関係' },
+  { id: 'challenge', label: '🔥 挑戦' },
+  { id: 'gratitude', label: '🙏 感謝' }
+];
+const STORAGE_KEY = 'notebook_entries_v1';
+
+// ===== ユーティリティ =====
+const $ = id => document.getElementById(id);
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function formatDateLabel(key) {
+  const [y,m,d] = key.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const w = ['日','月','火','水','木','金','土'][dt.getDay()];
+  return y + '年' + m + '月' + d + '日 ' + w + '曜日';
+}
+function formatShort(key) {
+  const [y,m,d] = key.split('-').map(Number);
+  return m + '/' + d;
+}
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+function getTagLabel(id) {
+  const t = TAGS.find(x => x.id === id);
+  return t ? t.label : id;
+}
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg, type) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.style.background = type === 'err' ? 'var(--accent)' : 'var(--success)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ===== 書くタブ =====
+let selectedMood = 3;
+let selectedTags = [];
+
+function renderMoodPicker() {
+  const p = $('moodPicker');
+  p.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('span');
+    s.className = 'mood-star' + (i <= selectedMood ? ' on' : '');
+    s.textContent = '★';
+    s.addEventListener('click', () => {
+      selectedMood = i;
+      renderMoodPicker();
+    });
+    p.appendChild(s);
+  }
+}
+function renderTagPicker() {
+  const p = $('tagPicker');
+  p.innerHTML = TAGS.map(t =>
+    `<button class="tag-chip ${selectedTags.includes(t.id) ? 'on' : ''}" data-t="${t.id}">${t.label}</button>`
+  ).join('');
+  p.querySelectorAll('.tag-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.t;
+      if (selectedTags.includes(id)) {
+        selectedTags = selectedTags.filter(x => x !== id);
+      } else {
+        selectedTags.push(id);
+      }
+      renderTagPicker();
+    });
+  });
+}
+
+function loadTodayIntoForm() {
+  const key = todayKey();
+  const entries = loadEntries();
+  const todayLabel = $('todayLabel');
+  const e = entries[key];
+  if (e) {
+    $('fieldEvent').value = e.event || '';
+    $('fieldLearning').value = e.learning || '';
+    $('fieldTomorrow').value = e.tomorrow || '';
+    selectedMood = e.mood || 3;
+    selectedTags = [...(e.tags || [])];
+    todayLabel.textContent = formatDateLabel(key) + ' ・ 編集モード';
+  } else {
+    $('fieldEvent').value = '';
+    $('fieldLearning').value = '';
+    $('fieldTomorrow').value = '';
+    selectedMood = 3;
+    selectedTags = [];
+    todayLabel.textContent = formatDateLabel(key);
+  }
+  renderMoodPicker();
+  renderTagPicker();
+}
+
+function saveToday() {
+  const event = $('fieldEvent').value.trim();
+  const learning = $('fieldLearning').value.trim();
+  const tomorrow = $('fieldTomorrow').value.trim();
+  if (!event && !learning && !tomorrow) {
+    showToast('どこか一つだけでも書いてみて', 'err');
+    return;
+  }
+  const entries = loadEntries();
+  entries[todayKey()] = {
+    event, learning, tomorrow,
+    mood: selectedMood,
+    tags: [...selectedTags],
+    updated: new Date().toISOString()
+  };
+  saveEntries(entries);
+  updateStreak();
+  showToast('今日の記録を保存したよ 🌸');
+  loadTodayIntoForm();
+}
+
+// ===== ストリーク =====
+function calcStreak() {
+  const entries = loadEntries();
+  let streak = 0;
+  const d = new Date();
+  // 今日書いてなくても昨日までで計算する
+  if (!entries[todayKey()]) d.setDate(d.getDate() - 1);
+  while (true) {
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    if (entries[key]) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else break;
+  }
+  return streak;
+}
+function updateStreak() {
+  $('streakBadge').textContent = '🔥 連続 ' + calcStreak() + ' 日';
+}
+
+// ===== 履歴タブ =====
+let historyFilter = { search: '', tag: null };
+
+function renderFilterRow() {
+  const row = $('filterRow');
+  row.innerHTML = '<button class="filter-chip ' + (historyFilter.tag === null ? 'on' : '') + '" data-t="">すべて</button>' +
+    TAGS.map(t => `<button class="filter-chip ${historyFilter.tag === t.id ? 'on' : ''}" data-t="${t.id}">${t.label}</button>`).join('');
+  row.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      historyFilter.tag = btn.dataset.t || null;
+      renderFilterRow();
+      renderHistory();
+    });
+  });
+}
+function renderHistory() {
+  const entries = loadEntries();
+  const list = $('historyList');
+  const q = historyFilter.search.toLowerCase().trim();
+  const keys = Object.keys(entries).sort().reverse();
+
+  const filtered = keys.filter(k => {
+    const e = entries[k];
+    if (historyFilter.tag && !(e.tags || []).includes(historyFilter.tag)) return false;
+    if (q) {
+      const hay = (k + ' ' + (e.event||'') + ' ' + (e.learning||'') + ' ' + (e.tomorrow||'')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">📖<br><br>まだ記録がないよ。<br>今日から、小さなことから、始めてみてね。</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(k => {
+    const e = entries[k];
+    const text = (e.event || e.learning || e.tomorrow || '');
+    const stars = '★'.repeat(e.mood || 3);
+    const tagsHtml = (e.tags || []).map(id => `<span class="hc-tag">${getTagLabel(id)}</span>`).join('');
+    return `
+      <div class="history-card" data-key="${k}">
+        <div class="hc-head">
+          <span class="hc-date">${formatDateLabel(k)}</span>
+          <span class="hc-mood">${stars}</span>
+        </div>
+        <div class="hc-excerpt">${escapeHtml(text)}</div>
+        <div class="hc-tags">${tagsHtml}</div>
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('.history-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.key));
+  });
+}
+
+function openDetail(key) {
+  const entries = loadEntries();
+  const e = entries[key];
+  if (!e) return;
+  $('modalTitle').textContent = formatDateLabel(key);
+  const stars = '★'.repeat(e.mood || 3) + '☆'.repeat(5 - (e.mood || 3));
+  const tagsHtml = (e.tags || []).length > 0
+    ? (e.tags || []).map(id => `<span class="hc-tag">${getTagLabel(id)}</span>`).join(' ')
+    : '<span style="color:var(--ink-soft);font-size:12px;">タグなし</span>';
+  $('modalBody').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">気分</div>
+      <div style="font-size:20px;color:var(--gold);">${stars}</div>
+    </div>
+    ${e.event ? `<div style="margin-bottom:14px;"><div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">今日の出来事</div><div style="font-size:14px;white-space:pre-wrap;line-height:1.7;">${escapeHtml(e.event)}</div></div>` : ''}
+    ${e.learning ? `<div style="margin-bottom:14px;"><div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">気づき・学び</div><div style="font-size:14px;white-space:pre-wrap;line-height:1.7;">${escapeHtml(e.learning)}</div></div>` : ''}
+    ${e.tomorrow ? `<div style="margin-bottom:14px;"><div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">明日の一言</div><div style="font-size:14px;white-space:pre-wrap;line-height:1.7;">${escapeHtml(e.tomorrow)}</div></div>` : ''}
+    <div style="margin-bottom:18px;">
+      <div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">タグ</div>
+      <div>${tagsHtml}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+      <button class="report-btn" data-act="edit">✏️ 編集する</button>
+      <button class="report-btn danger" data-act="del">🗑️ 削除</button>
+    </div>
+  `;
+  $('modal').classList.add('show');
+
+  $('modalBody').querySelector('[data-act=edit]').addEventListener('click', () => {
+    if (key === todayKey()) {
+      closeModal();
+      switchTab('write');
+    } else {
+      if (!confirm('この日の記録を「今日の記録」に読み込んで編集しますか？（日付は今日になります）')) return;
+      $('fieldEvent').value = e.event || '';
+      $('fieldLearning').value = e.learning || '';
+      $('fieldTomorrow').value = e.tomorrow || '';
+      selectedMood = e.mood || 3;
+      selectedTags = [...(e.tags || [])];
+      renderMoodPicker();
+      renderTagPicker();
+      closeModal();
+      switchTab('write');
+    }
+  });
+  $('modalBody').querySelector('[data-act=del]').addEventListener('click', () => {
+    if (!confirm(formatDateLabel(key) + 'の記録を削除します。よろしいですか？')) return;
+    const all = loadEntries();
+    delete all[key];
+    saveEntries(all);
+    closeModal();
+    renderHistory();
+    updateStreak();
+    renderReflect();
+    showToast('削除しました');
+  });
+}
+function closeModal() { $('modal').classList.remove('show'); }
+
+// ===== 振り返り =====
+function renderReflect() {
+  const entries = loadEntries();
+  const keys = Object.keys(entries).sort();
+  const now = new Date();
+
+  // 集計
+  const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 6);
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  let w = 0, m = 0;
+  keys.forEach(k => {
+    const [y,mo,d] = k.split('-').map(Number);
+    const dt = new Date(y, mo-1, d);
+    if (dt >= weekAgo && dt <= now) w++;
+    if (dt >= monthStart && dt <= now) m++;
+  });
+  $('stWeek').textContent = w;
+  $('stMonth').textContent = m;
+  $('stTotal').textContent = keys.length;
+
+  // タグ集計
+  const tagCount = {};
+  TAGS.forEach(t => tagCount[t.id] = 0);
+  keys.forEach(k => {
+    (entries[k].tags || []).forEach(id => {
+      if (tagCount[id] !== undefined) tagCount[id]++;
+    });
+  });
+  const maxCount = Math.max(1, ...Object.values(tagCount));
+  const tagChart = $('tagChart');
+  const sortedTags = TAGS.slice().sort((a,b) => tagCount[b.id] - tagCount[a.id]);
+  if (Object.values(tagCount).every(v => v === 0)) {
+    tagChart.innerHTML = '<div class="empty" style="padding:20px;">タグを付けて記録すると<br>ここにグラフが表示されます</div>';
+  } else {
+    tagChart.innerHTML = sortedTags.map(t => {
+      const c = tagCount[t.id];
+      const pct = Math.round((c / maxCount) * 100);
+      return `
+        <div class="bar-row">
+          <div class="bar-label">${t.label}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${Math.max(c === 0 ? 0 : 8, pct)}%">${c}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 気分推移（直近30日）
+  const moodChart = $('moodChart');
+  const points = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    points.push({ key, mood: entries[key] ? entries[key].mood : null });
+  }
+  const hasData = points.some(p => p.mood !== null);
+  if (!hasData) {
+    moodChart.innerHTML = '<div class="empty" style="padding:20px;">記録を続けると<br>気分の推移が見えるよ 📈</div>';
+  } else {
+    const width = 600, height = 180, padX = 30, padY = 20;
+    const stepX = (width - padX * 2) / 29;
+    const yFor = m => padY + (5 - m) * (height - padY * 2) / 4;
+    let path = '', dots = '';
+    let first = true;
+    points.forEach((p, i) => {
+      if (p.mood !== null) {
+        const x = padX + i * stepX;
+        const y = yFor(p.mood);
+        path += (first ? 'M' : 'L') + x + ',' + y + ' ';
+        dots += `<circle cx="${x}" cy="${y}" r="4" fill="var(--gold)" />`;
+        first = false;
+      } else {
+        first = true;
+      }
+    });
+    // 目盛り
+    let yGrid = '';
+    for (let s = 1; s <= 5; s++) {
+      const y = yFor(s);
+      yGrid += `<line x1="${padX}" y1="${y}" x2="${width - padX}" y2="${y}" stroke="var(--border)" stroke-width="1" />`;
+      yGrid += `<text x="${padX - 6}" y="${y + 3}" font-size="9" fill="var(--ink-soft)" text-anchor="end">${s}</text>`;
+    }
+    // x軸ラベル（先頭・中央・末尾）
+    let xLabels = '';
+    [0, 14, 29].forEach(i => {
+      const x = padX + i * stepX;
+      xLabels += `<text x="${x}" y="${height - 4}" font-size="9" fill="var(--ink-soft)" text-anchor="middle">${formatShort(points[i].key)}</text>`;
+    });
+    moodChart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" style="width:100%;height:auto;">
+      ${yGrid}
+      <path d="${path}" fill="none" stroke="var(--gold)" stroke-width="2"/>
+      ${dots}
+      ${xLabels}
+    </svg>`;
+  }
+
+  // ハイライト（今月で気分4-5 or 内容がある最新3件）
+  const highlights = $('highlights');
+  const monthKeys = keys.filter(k => {
+    const [y,mo,_] = k.split('-').map(Number);
+    return y === now.getFullYear() && mo === now.getMonth() + 1;
+  });
+  const sorted = monthKeys.slice().sort((a,b) => (entries[b].mood || 0) - (entries[a].mood || 0));
+  const top = sorted.filter(k => (entries[k].mood || 0) >= 4).slice(0, 3);
+  if (top.length === 0) {
+    highlights.innerHTML = '<div class="empty" style="padding:20px;">気分★4以上の記録が<br>今月まだありません</div>';
+  } else {
+    highlights.innerHTML = top.map(k => {
+      const e = entries[k];
+      const text = e.event || e.learning || e.tomorrow || '';
+      return `
+        <div class="highlight-card">
+          <div class="hl-date">${formatDateLabel(k)} ・ ${'★'.repeat(e.mood)}</div>
+          <div class="hl-text">${escapeHtml(text).substring(0, 120)}${text.length > 120 ? '...' : ''}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+// ===== 報告書 =====
+function renderReportOptions() {
+  const sel = $('reportMonth');
+  const entries = loadEntries();
+  const keys = Object.keys(entries);
+  const months = new Set();
+  keys.forEach(k => months.add(k.substring(0, 7)));
+  const now = new Date();
+  const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  months.add(thisMonth);
+  const arr = Array.from(months).sort().reverse();
+  sel.innerHTML = arr.map(m => {
+    const [y, mo] = m.split('-');
+    return `<option value="${m}">${y}年${parseInt(mo)}月</option>`;
+  }).join('');
+  sel.value = thisMonth;
+  sel.addEventListener('change', renderReport);
+  renderReport();
+}
+
+function renderReport() {
+  const month = $('reportMonth').value;
+  const entries = loadEntries();
+  const keys = Object.keys(entries).filter(k => k.startsWith(month)).sort();
+  const [y, mo] = month.split('-');
+  const label = y + '年' + parseInt(mo) + '月';
+
+  if (keys.length === 0) {
+    $('reportPreview').textContent = label + 'は記録がないよ。\n来月は毎日3行だけでも書いてみよう。';
+    return;
+  }
+
+  const moodAvg = (keys.reduce((s,k) => s + (entries[k].mood || 3), 0) / keys.length).toFixed(1);
+  const topMood = keys.slice().sort((a,b) => (entries[b].mood||0) - (entries[a].mood||0)).slice(0, 3);
+
+  // タグ集計
+  const tagCount = {};
+  keys.forEach(k => (entries[k].tags || []).forEach(id => {
+    tagCount[id] = (tagCount[id] || 0) + 1;
+  }));
+  const topTags = Object.keys(tagCount).sort((a,b) => tagCount[b] - tagCount[a]).slice(0, 3);
+
+  // 気づきピックアップ
+  const learnings = keys.map(k => entries[k].learning).filter(x => x && x.trim().length > 0).slice(-3);
+
+  let report = 'YoshiBonさんへ\n\n';
+  report += 'ロンドンの裕介です。\n' + label + 'の振り返りをお送りします。\n\n';
+  report += '── 今月の記録 ──\n';
+  report += '・記録した日数：' + keys.length + '日\n';
+  report += '・平均の気分　：★' + moodAvg + ' / 5\n';
+  if (topTags.length > 0) {
+    report += '・よく登場したテーマ：' + topTags.map(getTagLabel).join('、') + '\n';
+  }
+  report += '\n';
+
+  if (topMood.length > 0) {
+    report += '── 心に残った日 ベスト' + topMood.length + ' ──\n';
+    topMood.forEach((k, i) => {
+      const e = entries[k];
+      const text = (e.event || e.learning || '').replace(/\n/g,' ');
+      report += (i+1) + '. ' + formatDateLabel(k) + ' (★' + (e.mood||3) + ')\n   ' + text.substring(0, 80) + (text.length > 80 ? '...' : '') + '\n';
+    });
+    report += '\n';
+  }
+
+  if (learnings.length > 0) {
+    report += '── 今月の気づき ──\n';
+    learnings.forEach(l => {
+      report += '・' + l.replace(/\n/g,' ').substring(0, 100) + (l.length > 100 ? '...' : '') + '\n';
+    });
+    report += '\n';
+  }
+
+  report += '来月も、一歩ずつ。\nまたご報告します。\n\nロンドンより\n裕介';
+
+  $('reportPreview').textContent = report;
+}
+
+// ===== データ管理 =====
+function exportData() {
+  const data = localStorage.getItem(STORAGE_KEY) || '{}';
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'london-notebook-' + todayKey() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('書き出し完了 💾');
+}
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (typeof data !== 'object') throw new Error();
+      if (!confirm('既存データに上書きまたは追加されます。よろしいですか？')) return;
+      const cur = loadEntries();
+      const merged = { ...cur, ...data };
+      saveEntries(merged);
+      showToast('読み込み完了 📂');
+      updateStreak();
+      renderHistory();
+      renderReflect();
+      renderReportOptions();
+      loadTodayIntoForm();
+    } catch(err) {
+      showToast('ファイルが正しくありません', 'err');
+    }
+  };
+  reader.readAsText(file);
+}
+function resetData() {
+  if (!confirm('すべての記録を削除します。この操作は取り消せません。本当によろしいですか？')) return;
+  if (!confirm('もう一度確認します。本当に全部消してよいですか？')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  updateStreak();
+  renderHistory();
+  renderReflect();
+  renderReportOptions();
+  loadTodayIntoForm();
+  showToast('初期化しました');
+}
+
+// ===== タブ切替 =====
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.toggle('active', s.id === 'sec-' + name);
+  });
+  if (name === 'history') { renderFilterRow(); renderHistory(); }
+  if (name === 'reflect') renderReflect();
+  if (name === 'report')  renderReportOptions();
+  if (name === 'write')   loadTodayIntoForm();
+}
+
+// ===== ダークモード =====
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('notebook_dark', isDark ? '1' : '0');
+  $('darkToggle').textContent = isDark ? '☀️' : '🌙';
+}
+
+// ===== 初期化 =====
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('notebook_dark') === '1') {
+    document.body.classList.add('dark');
+    $('darkToggle').textContent = '☀️';
+  }
+  $('darkToggle').addEventListener('click', toggleDark);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  $('saveBtn').addEventListener('click', saveToday);
+  $('searchInput').addEventListener('input', (e) => {
+    historyFilter.search = e.target.value;
+    renderHistory();
+  });
+  $('modalClose').addEventListener('click', closeModal);
+  $('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  // 報告書アクション
+  $('copyReport').addEventListener('click', () => {
+    const text = $('reportPreview').textContent;
+    navigator.clipboard.writeText(text).then(
+      () => showToast('コピーしました 📋'),
+      () => showToast('コピーに失敗しました', 'err')
+    );
+  });
+  $('mailReport').addEventListener('click', () => {
+    const text = $('reportPreview').textContent;
+    const sub = encodeURIComponent('ロンドンからの報告書');
+    const body = encodeURIComponent(text);
+    location.href = 'mailto:?subject=' + sub + '&body=' + body;
+  });
+  $('lineReport').addEventListener('click', () => {
+    const text = $('reportPreview').textContent;
+    const url = 'https://line.me/R/share?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  });
+
+  $('exportBtn').addEventListener('click', exportData);
+  $('importBtn').addEventListener('click', () => $('importFile').click());
+  $('importFile').addEventListener('change', e => {
+    if (e.target.files[0]) importData(e.target.files[0]);
+    e.target.value = '';
+  });
+  $('resetBtn').addEventListener('click', resetData);
+
+  loadTodayIntoForm();
+  updateStreak();
+});
+</script>
+</body>
+</html>
