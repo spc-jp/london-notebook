@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a2d4a">
 <title>ロンドン気づきノート 〜裕介の成長記録〜</title>
- <!-- ファビコン -->
+
+<!-- ファビコン -->
 <link rel="icon" type="image/png" href="https://spc-jp.github.io/london-notebook/favicon.png">
 <link rel="apple-touch-icon" href="https://spc-jp.github.io/london-notebook/favicon.png">
 
-<!-- OGP（LINE・Facebook・X共通） -->
+<!-- OGP -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://spc-jp.github.io/london-notebook/">
 <meta property="og:title" content="ロンドン気づきノート 〜裕介の成長記録〜">
@@ -23,8 +24,9 @@
 <!-- X（Twitter）カード -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ロンドン気づきノート 〜裕介の成長記録〜">
-<meta name="twitter:description" content="3行日記・気分グラフ・月次レポートで、海外での成長を可視化。YoshiBonへの報告書も自動生成。">
+<meta name="twitter:description" content="3行日記・気分グラフ・月次レポートで、海外での成長を可視化。">
 <meta name="twitter:image" content="https://spc-jp.github.io/london-notebook/ogp.png">
+
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -37,6 +39,7 @@
     --border: rgba(26,45,74,0.15);
     --shadow: rgba(0,0,0,0.08);
     --success: #2d7a5f;
+    --line: #06c755;
   }
   body.dark {
     --bg: #0d1628;
@@ -60,7 +63,6 @@
   }
   .wrap { max-width: 680px; margin: 0 auto; }
 
-  /* ヘッダー */
   header { text-align: center; position: relative; padding: 10px 0 14px; }
   .dark-toggle {
     position: absolute; top: 0; right: 0;
@@ -77,25 +79,23 @@
     padding: 5px 14px; border-radius: 14px; letter-spacing: 1px;
   }
 
-  /* ナビ */
   nav.tabs {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(5, 1fr);
     gap: 4px; margin: 14px 0 16px;
     background: var(--card); border: 1px solid var(--border);
     padding: 4px; border-radius: 12px;
   }
   .tab-btn {
     background: transparent; border: none; color: var(--ink-soft);
-    padding: 10px 4px; font-size: 12px; cursor: pointer;
+    padding: 10px 2px; font-size: 11px; cursor: pointer;
     border-radius: 8px; font-family: inherit; font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px; white-space: nowrap;
   }
   .tab-btn.active { background: var(--ink); color: var(--bg); }
 
   .section { display: none; }
   .section.active { display: block; }
 
-  /* フィールド */
   .date-label {
     font-size: 13px; color: var(--gold);
     letter-spacing: 1px; margin-bottom: 16px; text-align: center;
@@ -116,7 +116,6 @@
   #fieldLearning { min-height: 90px; }
   #fieldTomorrow { min-height: 70px; }
 
-  /* 気分ピッカー */
   .mood-picker { display: flex; gap: 6px; }
   .mood-star {
     font-size: 30px; cursor: pointer; color: var(--ink-soft);
@@ -125,7 +124,6 @@
   .mood-star.on { color: var(--gold); }
   .mood-star:active { transform: scale(1.2); }
 
-  /* タグピッカー */
   .tag-picker { display: flex; flex-wrap: wrap; gap: 8px; }
   .tag-chip {
     background: var(--card); border: 1.5px solid var(--border);
@@ -137,7 +135,6 @@
     background: var(--ink); color: var(--bg); border-color: var(--ink);
   }
 
-  /* 保存ボタン */
   .save-btn {
     width: 100%; padding: 14px; background: var(--gold); color: white;
     border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
@@ -146,6 +143,53 @@
   }
   .save-btn:active { transform: scale(0.99); }
   .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* 保存後のクイック送信ボタン */
+  .quick-share {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(45,122,95,0.08);
+    border: 1px solid var(--success);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .quick-share.show { display: block; }
+  .qs-title {
+    font-size: 12px;
+    color: var(--success);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .qs-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .qs-btn {
+    padding: 10px 4px;
+    font-size: 11px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+    letter-spacing: 0.5px;
+  }
+  .qs-btn.line { background: var(--line); color: white; border-color: var(--line); }
+  .qs-skip {
+    display: block;
+    margin-top: 10px;
+    font-size: 10px;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+  }
 
   .toast {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -157,7 +201,6 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
 
-  /* 履歴 */
   .search-row {
     display: flex; gap: 8px; margin-bottom: 12px;
   }
@@ -197,7 +240,6 @@
     color: var(--ink-soft);
   }
 
-  /* 振り返り */
   .stat-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 8px; margin-bottom: 18px;
@@ -245,7 +287,62 @@
   .hl-date { font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; }
   .hl-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
 
-  /* レポート */
+  /* 週次サマリー */
+  .week-summary-box {
+    background: linear-gradient(135deg, rgba(184,134,11,0.08), rgba(201,48,44,0.06));
+    border: 1.5px solid var(--gold);
+    border-radius: 14px;
+    padding: 20px 18px;
+    margin-bottom: 18px;
+  }
+  .ws-title {
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .ws-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .ws-stat {
+    text-align: center;
+    padding: 8px 4px;
+    background: var(--card);
+    border-radius: 8px;
+  }
+  .ws-stat-num {
+    font-size: 20px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .ws-stat-label {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  .ws-text {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink);
+    white-space: pre-wrap;
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    padding: 12px;
+    background: var(--card);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .ws-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
   .report-controls {
     display: flex; gap: 8px; margin-bottom: 14px;
   }
@@ -258,24 +355,47 @@
     min-height: 200px; color: var(--ink);
   }
   .report-actions {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
   }
   .report-btn {
-    padding: 10px; font-size: 12px; background: var(--card);
+    padding: 10px 4px; font-size: 11px; background: var(--card);
     border: 1.5px solid var(--border); border-radius: 10px;
     cursor: pointer; font-family: inherit; color: var(--ink);
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
   .report-btn:active { transform: scale(0.98); }
+  .report-btn.line { background: var(--line); color: white; border-color: var(--line); }
 
-  /* データ管理 */
+  .cc-option {
+    margin: 12px 0;
+    padding: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cc-option input[type=checkbox] {
+    width: 18px; height: 18px;
+    accent-color: var(--gold);
+  }
+  .cc-option input[type=email] {
+    margin-top: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .cc-input-wrap { display: none; margin-top: 8px; }
+  .cc-input-wrap.show { display: block; }
+
   .data-section { margin-top: 28px; padding-top: 20px; border-top: 1px dashed var(--border); }
   .data-row {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   }
   .danger { color: var(--accent); border-color: var(--accent); }
 
-  /* モーダル */
   .modal {
     position: fixed; inset: 0; background: rgba(0,0,0,0.6);
     display: none; justify-content: center; align-items: flex-end;
@@ -320,7 +440,7 @@
     .subtitle { font-size: 10px; letter-spacing: 2px; }
     .streak-badge { font-size: 12px; padding: 4px 12px; }
     nav.tabs { padding: 3px; gap: 2px; }
-    .tab-btn { font-size: 11px; padding: 9px 2px; letter-spacing: 0; }
+    .tab-btn { font-size: 10px; padding: 9px 1px; letter-spacing: 0; }
     .stat-num { font-size: 22px; }
     .stat-label { font-size: 9px; letter-spacing: 0.5px; }
     .stat-card { padding: 12px 4px; }
@@ -333,7 +453,7 @@
     .mood-star { font-size: 26px; }
     .tag-chip { font-size: 11px; padding: 6px 10px; }
     .save-btn { font-size: 14px; padding: 13px; letter-spacing: 1px; }
-    .report-btn { font-size: 11px; padding: 9px 4px; letter-spacing: 0; }
+    .report-btn { font-size: 10px; padding: 9px 2px; letter-spacing: 0; }
     .hc-date { font-size: 12px; }
     .hc-excerpt { font-size: 12px; }
     .hc-tag { font-size: 9px; }
@@ -344,6 +464,9 @@
     .report-preview { font-size: 12px; padding: 14px 12px; }
     .motto { font-size: 12px; letter-spacing: 2px; }
     .from { font-size: 10px; }
+    .ws-stat-num { font-size: 18px; }
+    .ws-text { font-size: 12px; }
+    .qs-btn { font-size: 10px; padding: 9px 2px; }
   }
 </style>
 </head>
@@ -359,6 +482,7 @@
   <nav class="tabs">
     <button class="tab-btn active" data-tab="write">✏️ 書く</button>
     <button class="tab-btn" data-tab="history">📖 履歴</button>
+    <button class="tab-btn" data-tab="week">🗓 週次</button>
     <button class="tab-btn" data-tab="reflect">📊 振り返り</button>
     <button class="tab-btn" data-tab="report">💌 報告書</button>
   </nav>
@@ -390,6 +514,17 @@
       </div>
 
       <button class="save-btn" id="saveBtn">今日の記録を保存</button>
+
+      <!-- 保存後のクイック共有 -->
+      <div class="quick-share" id="quickShare">
+        <p class="qs-title">💾 今日の記録を残す場所を選ぼう</p>
+        <div class="qs-buttons">
+          <button class="qs-btn line" data-share="line">💬 LINE Keep</button>
+          <button class="qs-btn" data-share="mail">📧 メール</button>
+          <button class="qs-btn" data-share="copy">📋 コピー</button>
+        </div>
+        <button class="qs-skip" id="qsSkip">スキップ（アプリ内のみ保存）</button>
+      </div>
     </section>
 
     <!-- 履歴 -->
@@ -399,6 +534,11 @@
       </div>
       <div class="filter-row" id="filterRow"></div>
       <div id="historyList"></div>
+    </section>
+
+    <!-- 週次サマリー -->
+    <section class="section" id="sec-week">
+      <div id="weekSummary"></div>
     </section>
 
     <!-- 振り返り -->
@@ -434,10 +574,21 @@
         <select id="reportMonth"></select>
       </div>
       <div class="report-preview" id="reportPreview"></div>
+
+      <!-- 自分にもCC送る設定 -->
+      <div class="cc-option">
+        <input type="checkbox" id="ccSelf">
+        <label for="ccSelf">自分にもコピーを送る</label>
+        <div class="cc-input-wrap" id="ccInputWrap" style="flex:1;">
+          <input type="email" id="ccEmail" placeholder="your-mail@example.com">
+        </div>
+      </div>
+
       <div class="report-actions">
         <button class="report-btn" id="copyReport">📋 コピー</button>
         <button class="report-btn" id="mailReport">📧 メール</button>
-        <button class="report-btn" id="lineReport">💬 LINE</button>
+        <button class="report-btn line" id="lineReport">💬 LINE</button>
+        <button class="report-btn" id="keepReport">💾 LINE Keep</button>
       </div>
 
       <div class="data-section">
@@ -480,6 +631,7 @@ const TAGS = [
   { id: 'gratitude', label: '🙏 感謝' }
 ];
 const STORAGE_KEY = 'notebook_entries_v1';
+const SETTINGS_KEY = 'notebook_settings_v1';
 
 // ===== ユーティリティ =====
 const $ = id => document.getElementById(id);
@@ -504,6 +656,13 @@ function loadEntries() {
 function saveEntries(entries) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 }
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+function saveSettings(s) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
 function getTagLabel(id) {
   const t = TAGS.find(x => x.id === id);
   return t ? t.label : id;
@@ -518,6 +677,25 @@ function showToast(msg, type) {
   t.style.background = type === 'err' ? 'var(--accent)' : 'var(--success)';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// 今日の記録をテキスト形式で取得
+function buildTodayText() {
+  const entries = loadEntries();
+  const key = todayKey();
+  const e = entries[key];
+  if (!e) return '';
+  let t = '【ロンドン気づきノート】\n';
+  t += formatDateLabel(key) + '\n';
+  t += '気分：' + '★'.repeat(e.mood || 3) + '\n';
+  if (e.tags && e.tags.length > 0) {
+    t += 'タグ：' + e.tags.map(getTagLabel).join(' ') + '\n';
+  }
+  t += '\n';
+  if (e.event) t += '[今日の出来事]\n' + e.event + '\n\n';
+  if (e.learning) t += '[気づき・学び]\n' + e.learning + '\n\n';
+  if (e.tomorrow) t += '[明日の一言]\n' + e.tomorrow + '\n';
+  return t;
 }
 
 // ===== 書くタブ =====
@@ -576,6 +754,7 @@ function loadTodayIntoForm() {
     selectedTags = [];
     todayLabel.textContent = formatDateLabel(key);
   }
+  $('quickShare').classList.remove('show');
   renderMoodPicker();
   renderTagPicker();
 }
@@ -598,7 +777,25 @@ function saveToday() {
   saveEntries(entries);
   updateStreak();
   showToast('今日の記録を保存したよ 🌸');
-  loadTodayIntoForm();
+  $('quickShare').classList.add('show');
+}
+
+// クイック共有
+function quickShare(mode) {
+  const text = buildTodayText();
+  if (!text) { showToast('記録がありません', 'err'); return; }
+  if (mode === 'line') {
+    const url = 'https://line.me/R/share?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  } else if (mode === 'mail') {
+    const sub = encodeURIComponent('ロンドン気づきノート ' + formatDateLabel(todayKey()));
+    location.href = 'mailto:?subject=' + sub + '&body=' + encodeURIComponent(text);
+  } else if (mode === 'copy') {
+    navigator.clipboard.writeText(text).then(
+      () => showToast('クリップボードにコピーしました 📋'),
+      () => showToast('コピーに失敗しました', 'err')
+    );
+  }
 }
 
 // ===== ストリーク =====
@@ -606,7 +803,6 @@ function calcStreak() {
   const entries = loadEntries();
   let streak = 0;
   const d = new Date();
-  // 今日書いてなくても昨日までで計算する
   if (!entries[todayKey()]) d.setDate(d.getDate() - 1);
   while (true) {
     const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -679,6 +875,23 @@ function renderHistory() {
   });
 }
 
+function buildEntryText(key) {
+  const entries = loadEntries();
+  const e = entries[key];
+  if (!e) return '';
+  let t = '【ロンドン気づきノート】\n';
+  t += formatDateLabel(key) + '\n';
+  t += '気分：' + '★'.repeat(e.mood || 3) + '\n';
+  if (e.tags && e.tags.length > 0) {
+    t += 'タグ：' + e.tags.map(getTagLabel).join(' ') + '\n';
+  }
+  t += '\n';
+  if (e.event) t += '[今日の出来事]\n' + e.event + '\n\n';
+  if (e.learning) t += '[気づき・学び]\n' + e.learning + '\n\n';
+  if (e.tomorrow) t += '[明日の一言]\n' + e.tomorrow + '\n';
+  return t;
+}
+
 function openDetail(key) {
   const entries = loadEntries();
   const e = entries[key];
@@ -700,6 +913,11 @@ function openDetail(key) {
       <div style="font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">タグ</div>
       <div>${tagsHtml}</div>
     </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px;">
+      <button class="report-btn line" data-act="line">💬 LINE</button>
+      <button class="report-btn" data-act="mail">📧 メール</button>
+      <button class="report-btn" data-act="copy">📋 コピー</button>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
       <button class="report-btn" data-act="edit">✏️ 編集する</button>
       <button class="report-btn danger" data-act="del">🗑️ 削除</button>
@@ -707,7 +925,23 @@ function openDetail(key) {
   `;
   $('modal').classList.add('show');
 
-  $('modalBody').querySelector('[data-act=edit]').addEventListener('click', () => {
+  const body = $('modalBody');
+  body.querySelector('[data-act=line]').addEventListener('click', () => {
+    const t = buildEntryText(key);
+    window.open('https://line.me/R/share?text=' + encodeURIComponent(t), '_blank');
+  });
+  body.querySelector('[data-act=mail]').addEventListener('click', () => {
+    const t = buildEntryText(key);
+    location.href = 'mailto:?subject=' + encodeURIComponent('ロンドン気づきノート ' + formatDateLabel(key)) + '&body=' + encodeURIComponent(t);
+  });
+  body.querySelector('[data-act=copy]').addEventListener('click', () => {
+    const t = buildEntryText(key);
+    navigator.clipboard.writeText(t).then(
+      () => showToast('コピーしました 📋'),
+      () => showToast('コピーに失敗しました', 'err')
+    );
+  });
+  body.querySelector('[data-act=edit]').addEventListener('click', () => {
     if (key === todayKey()) {
       closeModal();
       switchTab('write');
@@ -724,7 +958,7 @@ function openDetail(key) {
       switchTab('write');
     }
   });
-  $('modalBody').querySelector('[data-act=del]').addEventListener('click', () => {
+  body.querySelector('[data-act=del]').addEventListener('click', () => {
     if (!confirm(formatDateLabel(key) + 'の記録を削除します。よろしいですか？')) return;
     const all = loadEntries();
     delete all[key];
@@ -738,13 +972,119 @@ function openDetail(key) {
 }
 function closeModal() { $('modal').classList.remove('show'); }
 
+// ===== 週次サマリー =====
+function renderWeekSummary() {
+  const container = $('weekSummary');
+  const entries = loadEntries();
+  const now = new Date();
+  // 直近7日間（今日含む）
+  const keys = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const k = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    if (entries[k]) keys.push(k);
+  }
+
+  if (keys.length === 0) {
+    container.innerHTML = `
+      <div class="week-summary-box">
+        <p class="ws-title">🗓 今週の振り返り</p>
+        <div class="empty" style="padding:20px;">
+          今週はまだ記録がないよ。<br>
+          1日1行でも、書いてみよう。
+        </div>
+      </div>`;
+    return;
+  }
+
+  const moodAvg = (keys.reduce((s,k) => s + (entries[k].mood || 3), 0) / keys.length).toFixed(1);
+  const tagCount = {};
+  keys.forEach(k => (entries[k].tags || []).forEach(id => {
+    tagCount[id] = (tagCount[id] || 0) + 1;
+  }));
+  const topTag = Object.keys(tagCount).sort((a,b) => tagCount[b] - tagCount[a])[0];
+  const topDay = keys.slice().sort((a,b) => (entries[b].mood||0) - (entries[a].mood||0))[0];
+
+  let summary = '【今週の振り返り】\n';
+  summary += '期間：' + formatShort(keys[0]) + ' 〜 ' + formatShort(keys[keys.length-1]) + '\n';
+  summary += '記録した日：' + keys.length + '日 / 7日\n';
+  summary += '平均の気分：★' + moodAvg + ' / 5\n';
+  if (topTag) summary += 'よく登場したテーマ：' + getTagLabel(topTag) + '\n';
+  summary += '\n';
+
+  if (topDay) {
+    const e = entries[topDay];
+    const t = (e.event || e.learning || '').replace(/\n/g,' ').substring(0, 80);
+    summary += '今週いちばん心に残った日\n';
+    summary += formatDateLabel(topDay) + '（★' + (e.mood||3) + '）\n';
+    summary += t + '\n\n';
+  }
+
+  const learnings = keys.map(k => entries[k].learning).filter(x => x && x.trim().length > 0).slice(-3);
+  if (learnings.length > 0) {
+    summary += '今週の気づき\n';
+    learnings.forEach(l => {
+      summary += '・' + l.replace(/\n/g,' ').substring(0, 60) + (l.length > 60 ? '...' : '') + '\n';
+    });
+  }
+
+  summary += '\n来週も、一歩ずつ。';
+
+  container.innerHTML = `
+    <div class="week-summary-box">
+      <p class="ws-title">🗓 今週の振り返り</p>
+      <div class="ws-stats">
+        <div class="ws-stat">
+          <div class="ws-stat-num">${keys.length}</div>
+          <div class="ws-stat-label">記録した日 / 7</div>
+        </div>
+        <div class="ws-stat">
+          <div class="ws-stat-num">★${moodAvg}</div>
+          <div class="ws-stat-label">平均の気分</div>
+        </div>
+        <div class="ws-stat">
+          <div class="ws-stat-num">${topTag ? getTagLabel(topTag).slice(0,2) : '—'}</div>
+          <div class="ws-stat-label">一番のテーマ</div>
+        </div>
+      </div>
+      <div class="ws-text">${escapeHtml(summary)}</div>
+      <div class="ws-actions">
+        <button class="report-btn" data-wk="copy">📋 コピー</button>
+        <button class="report-btn" data-wk="mail">📧 メール</button>
+        <button class="report-btn line" data-wk="line">💬 LINE</button>
+        <button class="report-btn" data-wk="keep">💾 Keep</button>
+      </div>
+    </div>
+  `;
+
+  const actions = container.querySelectorAll('[data-wk]');
+  actions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.wk;
+      if (mode === 'copy') {
+        navigator.clipboard.writeText(summary).then(
+          () => showToast('コピーしました 📋'),
+          () => showToast('コピー失敗', 'err')
+        );
+      } else if (mode === 'mail') {
+        const settings = loadSettings();
+        const to = settings.ccEmail ? settings.ccEmail : '';
+        const sub = encodeURIComponent('今週の振り返り ' + formatShort(keys[0]) + '〜' + formatShort(keys[keys.length-1]));
+        location.href = 'mailto:' + to + '?subject=' + sub + '&body=' + encodeURIComponent(summary);
+      } else if (mode === 'line' || mode === 'keep') {
+        window.open('https://line.me/R/share?text=' + encodeURIComponent(summary), '_blank');
+      }
+    });
+  });
+}
+
 // ===== 振り返り =====
 function renderReflect() {
   const entries = loadEntries();
   const keys = Object.keys(entries).sort();
   const now = new Date();
 
-  // 集計
   const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 6);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   let w = 0, m = 0;
@@ -758,7 +1098,6 @@ function renderReflect() {
   $('stMonth').textContent = m;
   $('stTotal').textContent = keys.length;
 
-  // タグ集計
   const tagCount = {};
   TAGS.forEach(t => tagCount[t.id] = 0);
   keys.forEach(k => {
@@ -786,7 +1125,6 @@ function renderReflect() {
     }).join('');
   }
 
-  // 気分推移（直近30日）
   const moodChart = $('moodChart');
   const points = [];
   for (let i = 29; i >= 0; i--) {
@@ -814,14 +1152,12 @@ function renderReflect() {
         first = true;
       }
     });
-    // 目盛り
     let yGrid = '';
     for (let s = 1; s <= 5; s++) {
       const y = yFor(s);
       yGrid += `<line x1="${padX}" y1="${y}" x2="${width - padX}" y2="${y}" stroke="var(--border)" stroke-width="1" />`;
       yGrid += `<text x="${padX - 6}" y="${y + 3}" font-size="9" fill="var(--ink-soft)" text-anchor="end">${s}</text>`;
     }
-    // x軸ラベル（先頭・中央・末尾）
     let xLabels = '';
     [0, 14, 29].forEach(i => {
       const x = padX + i * stepX;
@@ -835,7 +1171,6 @@ function renderReflect() {
     </svg>`;
   }
 
-  // ハイライト（今月で気分4-5 or 内容がある最新3件）
   const highlights = $('highlights');
   const monthKeys = keys.filter(k => {
     const [y,mo,_] = k.split('-').map(Number);
@@ -875,7 +1210,6 @@ function renderReportOptions() {
     return `<option value="${m}">${y}年${parseInt(mo)}月</option>`;
   }).join('');
   sel.value = thisMonth;
-  sel.addEventListener('change', renderReport);
   renderReport();
 }
 
@@ -894,14 +1228,12 @@ function renderReport() {
   const moodAvg = (keys.reduce((s,k) => s + (entries[k].mood || 3), 0) / keys.length).toFixed(1);
   const topMood = keys.slice().sort((a,b) => (entries[b].mood||0) - (entries[a].mood||0)).slice(0, 3);
 
-  // タグ集計
   const tagCount = {};
   keys.forEach(k => (entries[k].tags || []).forEach(id => {
     tagCount[id] = (tagCount[id] || 0) + 1;
   }));
   const topTags = Object.keys(tagCount).sort((a,b) => tagCount[b] - tagCount[a]).slice(0, 3);
 
-  // 気づきピックアップ
   const learnings = keys.map(k => entries[k].learning).filter(x => x && x.trim().length > 0).slice(-3);
 
   let report = 'YoshiBonさんへ\n\n';
@@ -992,6 +1324,7 @@ function switchTab(name) {
     s.classList.toggle('active', s.id === 'sec-' + name);
   });
   if (name === 'history') { renderFilterRow(); renderHistory(); }
+  if (name === 'week')    renderWeekSummary();
   if (name === 'reflect') renderReflect();
   if (name === 'report')  renderReportOptions();
   if (name === 'write')   loadTodayIntoForm();
@@ -1027,6 +1360,39 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'modal') closeModal();
   });
 
+  // クイック共有ボタン
+  document.querySelectorAll('.qs-btn').forEach(btn => {
+    btn.addEventListener('click', () => quickShare(btn.dataset.share));
+  });
+  $('qsSkip').addEventListener('click', () => {
+    $('quickShare').classList.remove('show');
+  });
+
+  // 月の選択
+  $('reportMonth').addEventListener('change', renderReport);
+
+  // CC設定
+  const settings = loadSettings();
+  if (settings.ccSelf) {
+    $('ccSelf').checked = true;
+    $('ccInputWrap').classList.add('show');
+  }
+  if (settings.ccEmail) {
+    $('ccEmail').value = settings.ccEmail;
+  }
+  $('ccSelf').addEventListener('change', () => {
+    $('ccInputWrap').classList.toggle('show', $('ccSelf').checked);
+    const s = loadSettings();
+    s.ccSelf = $('ccSelf').checked;
+    saveSettings(s);
+  });
+  $('ccEmail').addEventListener('change', () => {
+    const s = loadSettings();
+    s.ccEmail = $('ccEmail').value.trim();
+    saveSettings(s);
+    showToast('メール保存しました');
+  });
+
   // 報告書アクション
   $('copyReport').addEventListener('click', () => {
     const text = $('reportPreview').textContent;
@@ -1038,13 +1404,28 @@ window.addEventListener('DOMContentLoaded', () => {
   $('mailReport').addEventListener('click', () => {
     const text = $('reportPreview').textContent;
     const sub = encodeURIComponent('ロンドンからの報告書');
-    const body = encodeURIComponent(text);
-    location.href = 'mailto:?subject=' + sub + '&body=' + body;
+    const s = loadSettings();
+    let body = text;
+    let to = '';
+    if (s.ccSelf && s.ccEmail) {
+      // 自分にもCCを送る
+      to = s.ccEmail;
+      body = '※このメールは自分にもコピーして送信されます\n\n' + text;
+    }
+    location.href = 'mailto:' + to + '?subject=' + sub + '&body=' + encodeURIComponent(body);
   });
   $('lineReport').addEventListener('click', () => {
     const text = $('reportPreview').textContent;
     const url = 'https://line.me/R/share?text=' + encodeURIComponent(text);
     window.open(url, '_blank');
+  });
+  $('keepReport').addEventListener('click', () => {
+    const text = $('reportPreview').textContent;
+    const url = 'https://line.me/R/share?text=' + encodeURIComponent('【LINE Keepに保存用】\n\n' + text);
+    window.open(url, '_blank');
+    setTimeout(() => {
+      showToast('送信後、LINE Keepを選択してね');
+    }, 500);
   });
 
   $('exportBtn').addEventListener('click', exportData);
